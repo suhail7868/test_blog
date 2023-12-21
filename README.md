@@ -16,9 +16,10 @@ Responsive design for various device
 Installation
 Clone the repository: git clone https://github.com/suhail7868/test_blog.git
 Navigate to the project directory: cd test_blog
-Install dependencies: npm install
-Configure database settings in config.js
-Run the application: npm start
+Install dependencies: pip install -r requirements.txt
+Configure database: python manage.py makemigrations
+                    python manage.py migrate
+Run the application: python manage.py runserver
 Access MiniBlog in your browser at http://localhost:3000
 Usage
 Create a new account or log in.
