@@ -1,6 +1,6 @@
 # test_blog
 
-# Project Title
+
 Blogger: Personal MiniBlog Platform
 
 
