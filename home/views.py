@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
-from .form import *
 
-from django.contrib.auth import logout
 # Create your views here.
 
+from .form import *
+from django.contrib.auth import logout
 
 
 def logout_view(request):
@@ -14,13 +14,11 @@ def logout_view(request):
 def home(request):
     context = {'blogs': BlogModel.objects.all()}
     return render(request, 'home.html', context)
-    
-    
-
 
 
 def login_view(request):
-    return render(request,'login.html')
+    return render(request, 'login.html')
+
 
 def blog_detail(request, slug):
     context = {}
@@ -30,6 +28,7 @@ def blog_detail(request, slug):
     except Exception as e:
         print(e)
     return render(request, 'blog_detail.html', context)
+
 
 def see_blog(request):
     context = {}
@@ -50,7 +49,7 @@ def add_blog(request):
         if request.method == 'POST':
             form = BlogForm(request.POST)
             print(request.FILES)
-     
+            image = request.FILES.get('image', '')
             title = request.POST.get('title')
             user = request.user
 
@@ -60,7 +59,7 @@ def add_blog(request):
 
             blog_obj = BlogModel.objects.create(
                 user=user, title=title,
-                content=content, 
+                content=content, image=image
             )
             print(blog_obj)
             return redirect('/add-blog/')
@@ -68,6 +67,8 @@ def add_blog(request):
         print(e)
 
     return render(request, 'add_blog.html', context)
+
+
 def blog_update(request, slug):
     context = {}
     try:
@@ -102,7 +103,6 @@ def blog_update(request, slug):
     return render(request, 'update_blog.html', context)
 
 
-
 def blog_delete(request, id):
     try:
         blog_obj = BlogModel.objects.get(id=id)
@@ -115,8 +115,11 @@ def blog_delete(request, id):
 
     return redirect('/see-blog/')
 
+
 def register_view(request):
-    return render(request,'register.html')
+    return render(request, 'register.html')
+
+
 def verify(request, token):
     try:
         profile_obj = Profile.objects.filter(token=token).first()

@@ -6,8 +6,8 @@ from .helper import *
 from django.contrib.auth import authenticate, login
 
 
-
 class LoginView(APIView):
+
     def post(self, request):
         response = {}
         response['status'] = 500
@@ -22,12 +22,20 @@ class LoginView(APIView):
             if data.get('password') is None:
                 response['message'] = 'key password not found'
                 raise Exception('key password not found')
-            check_user = User.objects.filter(username=data.get('username')).first()
+
+            check_user = User.objects.filter(
+                username=data.get('username')).first()
 
             if check_user is None:
                 response['message'] = 'invalid username , user not found'
                 raise Exception('invalid username not found')
-            user_obj = authenticate(username=data.get('username'),password=data.get('password'))
+
+            if not Profile.objects.filter(user=check_user).first().is_verified:
+                response['message'] = 'your profile is not verified'
+                raise Exception('profile not verified')
+
+            user_obj = authenticate(username=data.get('username'),
+                                    password=data.get('password'))
             if user_obj:
                 login(request, user_obj)
                 response['status'] = 200
@@ -40,10 +48,10 @@ class LoginView(APIView):
         except Exception as e:
             print(e)
 
-       
         return Response(response)
-LoginView=LoginView.as_view()
 
+
+LoginView = LoginView.as_view()
 
 
 class RegisterView(APIView):
@@ -66,7 +74,8 @@ class RegisterView(APIView):
                 response['message'] = 'username  already taken'
                 raise Exception('username  already taken')
 
-            user_obj = User.objects.create(email=data.get('username'),username=data.get('username'))
+            user_obj = User.objects.create(email=data.get('username'),
+                                           username=data.get('username'))
             user_obj.set_password(data.get('password'))
             user_obj.save()
             token = generate_random_string(20)
